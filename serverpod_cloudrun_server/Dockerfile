@@ -1,18 +1,23 @@
 FROM dart:stable
-ARG mode development
 
-RUN echo 'Building Image in $mode'
+ARG mode=development
+ARG serverId=1
+
+RUN echo Building Image in $mode mode and with Server Id: $serverId
+
+ENV MODE=mode
+ENV SERVER_ID=serverID
 
 WORKDIR /app
 COPY . .
 
-RUN chmod +x ./bin/main.dart
-
 RUN  dart pub get
+
+RUN dart compile exe bin/main.dart
 
 EXPOSE 8080
 EXPOSE 8081
 EXPOSE 8082 
 
-CMD ["dart","bin/main.dart"]
+CMD ["bin/main.exe"]
 
