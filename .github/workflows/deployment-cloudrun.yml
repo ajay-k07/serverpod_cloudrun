@@ -35,11 +35,11 @@ jobs:
           SERVERPOD_PASSWORDS: ${{ secrets.SERVERPOD_PASSWORDS }}
         run: |
           pwd
-          echo "${{ secrets.SERVERPOD_PASSWORDS }}" > config/passwords.yaml
+          echo "$SERVERPOD_PASSWORDS" > config/passwords.yaml
           ls config/
 
       - name: Build the Docker image
-        run: docker build -t ${PROJECT_NAME}_server --file Dockerfile . 
+        run: docker build -t server --file Dockerfile . 
 
       - id: "deploy"
         uses: "google-github-actions/deploy-cloudrun@v1"
