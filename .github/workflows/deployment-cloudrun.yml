@@ -39,7 +39,7 @@ jobs:
           ls config/
 
       - name: Build the Docker image
-        run: docker build -t server . 
+        run: ls && cd serverpod_cloudrun_server && ls && docker build -t server . 
 
       - id: "deploy"
         uses: "google-github-actions/deploy-cloudrun@v1"
