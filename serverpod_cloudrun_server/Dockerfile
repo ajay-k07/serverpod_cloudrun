@@ -1,29 +1,23 @@
-FROM dart:stable AS build
+FROM dart:stable
 
-# Resolve app dependencies.
+ARG mode=development
+ARG serverId=1
+
+RUN echo Building Image in $mode mode and with Server Id: $serverId
+
+ENV MODE=mode
+ENV SERVER_ID=serverID
+
 WORKDIR /app
-COPY pubspec.* ./
-RUN dart pub get
-
-# Copy app source code and AOT compile it.
 COPY . .
-# Ensure packages are still up-to-date if anything has changed
-RUN dart pub get --offline
-RUN dart compile exe bin/main.dart -o bin/main
 
+RUN  dart pub get
+
+RUN dart compile exe bin/main.dart
 
 EXPOSE 8080
 EXPOSE 8081
 EXPOSE 8082 
 
-CMD ["/bin/main"]
+CMD ["bin/main.exe"]
 
-
-
-#future update 
-
-#FROM scratch
-# COPY --from=build /app/bin/main app/bin
-# COPY --from=build /app/config/ app/config
-# COPY --from=build /app/generated/ app/generated
-# COPY --from=build /app/web/ app/web
