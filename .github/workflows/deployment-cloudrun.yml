@@ -7,6 +7,10 @@ jobs:
     name: Deploy to Google Cloud Run
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: "read"
+      id-token: "write"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,13 +38,14 @@ jobs:
           echo "$SERVERPOD_PASSWORDS" > config/passwords.yaml
           ls config/
 
-      - name: Dart Analysis
-        working-directory: serverpod_cloudrun_server
-        run: dart analyze > analyze.txt
-
-      - name: Get Dart packages
-        working-directory: serverpod_cloudrun_server
-        run: dart pub get
-
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag ${PROJECT_NAME}_server:$(date +%s)
+
+      - id: "deploy"
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: "hello-cloud-run"
+          image: "gcr.io/cloudrun/hello"
+
+      - name: "Use output"
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
