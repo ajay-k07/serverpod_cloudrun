@@ -40,17 +40,17 @@ jobs:
         run:  cd serverpod_cloudrun_server && docker build -t server . 
         
       - name: Tag the Docker image
-        run: docker tag server gcr.io/severpod/server:v1.0
+        run: docker tag server gcr.io/serverpod/server:v1.0
 
       - name: Push Docker image
-        run: docker push gcr.io/severpod/server:v1.0
+        run: docker push gcr.io/serverpod/server:v1.0
 
 
       - id: deploy
         name: Deploy Docker image
         uses: "google-github-actions/deploy-cloudrun@v0"
         with:
-          image: gcr.io/severpod/server:v1.0
+          image: gcr.io/serverpod/server:v1.0
           region: us-central1
           service: app
           flags: --port=8080
