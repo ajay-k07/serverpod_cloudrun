@@ -39,7 +39,7 @@ jobs:
           ls config/
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${PROJECT_NAME}_server:$(date +%s)
+        run: docker build . --file Dockerfile ${PROJECT_NAME}_server
 
       - id: "deploy"
         uses: "google-github-actions/deploy-cloudrun@v1"
