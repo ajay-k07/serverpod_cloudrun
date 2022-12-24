@@ -30,7 +30,6 @@ jobs:
           SERVERPOD_PASSWORDS: ${{ secrets.SERVERPOD_PASSWORDS }}
         run: |
           pwd
-          echo ${{secrets.SERVERPOD_PASSWORDS}} | sed 's/./& /g'
           echo $SERVERPOD_PASSWORDS > config/passwords.yaml
           ls config/
           
