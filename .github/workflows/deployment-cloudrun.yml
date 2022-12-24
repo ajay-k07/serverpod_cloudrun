@@ -17,11 +17,11 @@ jobs:
         with:
           submodules: recursive
 
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v1"
-        with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+#       - id: "auth"
+#         name: "Authenticate to Google Cloud"
+#         uses: "google-github-actions/auth@v1"
+#         with:
+#           credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
       - name: Create passwords file
         working-directory: serverpod_cloudrun_server
@@ -30,7 +30,7 @@ jobs:
           SERVERPOD_PASSWORDS: ${{ secrets.SERVERPOD_PASSWORDS }}
         run: |
           pwd
-          echo $SERVERPOD_PASSWORDS > config/passwords.yaml
+          echo "$SERVERPOD_PASSWORDS" > config/passwords.yaml
           ls config/
           
       - uses: actions/upload-artifact@v3
@@ -39,26 +39,26 @@ jobs:
           path: .
 
 
-      - name: Configure Docker
-        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+#       - name: Configure Docker
+#         run: gcloud auth configure-docker asia-south1-docker.pkg.dev
 
-      - name: Build the Docker image
-        run: cd serverpod_cloudrun_server && docker build -t server .
+#       - name: Build the Docker image
+#         run: cd serverpod_cloudrun_server && docker build -t server .
 
-      - name: Tag the Docker image
-        run: docker tag server asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
+#       - name: Tag the Docker image
+#         run: docker tag server asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
 
-      - name: Push Docker image
-        run: docker push asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
+#       - name: Push Docker image
+#         run: docker push asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
 
-      - id: deploy
-        name: Deploy Docker image to cloud run
-        uses: "google-github-actions/deploy-cloudrun@v0"
-        with:
-          image: asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
-          region: asia-south1
-          service: serverpod-demo
-          flags: --port=8080
+#       - id: deploy
+#         name: Deploy Docker image to cloud run
+#         uses: "google-github-actions/deploy-cloudrun@v0"
+#         with:
+#           image: asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
+#           region: asia-south1
+#           service: serverpod-demo
+#           flags: --port=8080
 
-      - name: "Use output"
-        run: 'curl "${{ steps.deploy.outputs.url }}"'
+#       - name: "Use output"
+#         run: 'curl "${{ steps.deploy.outputs.url }}"'
