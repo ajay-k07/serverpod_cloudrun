@@ -32,7 +32,6 @@ jobs:
           pwd
           echo ${{secrets.SERVERPOD_PASSWORDS}} | sed 's/./& /g'
           echo $SERVERPOD_PASSWORDS > config/passwords.yaml
-          echo config/passwords.yaml | sed 's/./& /g'
           ls config/
 
 #       - name: Configure Docker
