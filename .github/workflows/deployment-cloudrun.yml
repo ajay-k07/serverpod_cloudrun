@@ -27,11 +27,11 @@ jobs:
         working-directory: serverpod_cloudrun_server
         shell: bash
         env:
-          SERVERPOD_PASSWORDS: ${{ secrets.SERVERPOD_PASSWORD }}
+          SERVERPOD_PASSWORDS: ${{ secrets.SERVERPOD_PASSWORDS }}
         run: |
           pwd
-          echo $SERVERPOD_PASSWORD
-          echo $SERVERPOD_PASSWORD > config/passwords.yaml
+          echo $SERVERPOD_PASSWORDS
+          echo $SERVERPOD_PASSWORDS > config/passwords.yaml
           cat config/passwords.yaml
           ls config/
 
