@@ -23,11 +23,6 @@ jobs:
         with:
           credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
-      - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@v1.3
-        with:
-          sdk: 2.18.1
-
       - name: Create passwords file
         working-directory: serverpod_cloudrun_server
         shell: bash
@@ -37,15 +32,28 @@ jobs:
           pwd
           echo "$SERVERPOD_PASSWORDS" > config/passwords.yaml
           ls config/
+          
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${PROJECT_NAME}_server:$(date +%s)
+        run:  cd serverpod_cloudrun_server && docker build -t server . 
+        
+      - name: Tag the Docker image
+        run: docker tag server gcr.io/serverpod/server:v1.0
 
-      - id: "deploy"
-        uses: "google-github-actions/deploy-cloudrun@v1"
+      - name: Push Docker image
+        run: docker push gcr.io/serverpod/server:v1.0
+
+
+      - id: deploy
+        name: Deploy Docker image
+        uses: "google-github-actions/deploy-cloudrun@v0"
         with:
-          service: "hello-cloud-run"
-          image: "gcr.io/cloudrun/hello"
+          image: gcr.io/serverpod/server:v1.0
+          region: us-central1
+          service: app
+          flags: --port=8080
 
       - name: "Use output"
         run: 'curl "${{ steps.deploy.outputs.url }}"'
