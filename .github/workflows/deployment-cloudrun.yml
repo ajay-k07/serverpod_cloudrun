@@ -3,6 +3,7 @@ on:
   push:
 
 jobs:
+  runs-on: ubuntu-latest
   deploy:
     name: Deploy to Google Cloud Run
     runs-on: ubuntu-latest
@@ -32,27 +33,26 @@ jobs:
           pwd
           echo "$SERVERPOD_PASSWORDS" > config/passwords.yaml
           ls config/
-          
+
       - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
+        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
 
       - name: Build the Docker image
-        run:  cd serverpod_cloudrun_server && docker build -t server . 
-        
+        run: cd serverpod_cloudrun_server && docker build -t server .
+
       - name: Tag the Docker image
-        run: docker tag server gcr.io/serverpod/server:v1.0
+        run: docker tag server asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
 
       - name: Push Docker image
-        run: docker push gcr.io/serverpod/server:v1.0
-
+        run: docker push asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
 
       - id: deploy
-        name: Deploy Docker image
+        name: Deploy Docker image to cloud run
         uses: "google-github-actions/deploy-cloudrun@v0"
         with:
-          image: gcr.io/serverpod/server:v1.0
-          region: us-central1
-          service: app
+          image: asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
+          region: asia-south1
+          service: serverpod-demo
           flags: --port=8080
 
       - name: "Use output"
