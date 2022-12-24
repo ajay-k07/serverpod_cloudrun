@@ -57,7 +57,6 @@ jobs:
           image: asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/server:v.1
           region: asia-south1
           service: serverpod-demo
-          authentication: allow
           flags: 
             --port=8080
             --allow-unauthenticated
