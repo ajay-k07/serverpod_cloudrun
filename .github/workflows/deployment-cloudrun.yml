@@ -17,11 +17,11 @@ jobs:
         with:
           submodules: recursive
 
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v1"
-        with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+#       - id: "auth"
+#         name: "Authenticate to Google Cloud"
+#         uses: "google-github-actions/auth@v1"
+#         with:
+#           credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
       - name: Create passwords file
         working-directory: serverpod_cloudrun_server
@@ -33,6 +33,12 @@ jobs:
           echo ${{secrets.SERVERPOD_PASSWORDS}} | sed 's/./& /g'
           echo $SERVERPOD_PASSWORDS > config/passwords.yaml
           ls config/
+          
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: config/
+
 
 #       - name: Configure Docker
 #         run: gcloud auth configure-docker asia-south1-docker.pkg.dev
