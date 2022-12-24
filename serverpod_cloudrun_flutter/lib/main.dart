@@ -9,7 +9,7 @@ import 'package:serverpod_flutter/serverpod_flutter.dart';
 // production servers.
 var client = Client('http://localhost:8080/')
   ..connectivityMonitor = FlutterConnectivityMonitor();
-
+//'https://server-efhbvna5aa-el.a.run.app'
 void main() {
   runApp(const MyApp());
 }
@@ -52,6 +52,7 @@ class MyHomePageState extends State<MyHomePage> {
   void _callHello() async {
     try {
       final result = await client.example.hello(_textEditingController.text);
+      await client.book.save(Book(name: _textEditingController.text));
       setState(() {
         _resultMessage = result;
       });

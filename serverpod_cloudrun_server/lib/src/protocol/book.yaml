@@ -1,0 +1,4 @@
+class: Book 
+table: book 
+fields:
+  name: String

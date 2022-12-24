@@ -1,2 +1,5 @@
+book:
+  - getAllBook:
+  - save:
 example:
   - hello:
