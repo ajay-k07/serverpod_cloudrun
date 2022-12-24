@@ -3,6 +3,7 @@ FROM dart:stable
 ARG mode=development
 ARG serverId=1
 
+
 RUN echo Building Image in $mode mode and with Server Id: $serverId
 
 ENV MODE=mode
