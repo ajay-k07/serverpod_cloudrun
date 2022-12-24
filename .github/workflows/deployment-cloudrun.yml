@@ -3,7 +3,6 @@ on:
   push:
 
 jobs:
-  runs-on: ubuntu-latest
   deploy:
     name: Deploy to Google Cloud Run
     runs-on: ubuntu-latest
