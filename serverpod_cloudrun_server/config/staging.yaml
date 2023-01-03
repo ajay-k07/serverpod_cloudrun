@@ -29,15 +29,15 @@ webServer:
   publicPort: 443
   publicScheme: https
 
-# This is the database setup for your servers.
+# This is the database setup for your server.
 database:
-  host: database-staging.examplepod.com
-  port: 5432
-  name: serverpod
+  host: 144.24.151.239
+  port: 8090
+  name: email
   user: postgres
 
 # This is the setup for Redis.
 redis:
   enabled: false
-  host: redis-staging.examplepod.com
-  port: 6379
+  host: 144.24.151.239
+  port: 8091

@@ -17,15 +17,52 @@ When you are finished, you can shut down Serverpod with `Ctrl-C`, then stop Post
 
 lets see how we can deploy serverpod to cloud run 
 
-    1. Lets create the Docker File
-    2. Build The Docker Image 
-    3. Create the Workflows
+    1. Enable Api   
+        Cloud Run
+        Artifact Registry
+        Cloud Build
+
+    1. Create the Service accout and get the json file
+    2. Storing the Json File in Github secrets
+    3. Review the Github Workflows and Docker File
     4. Lets Do git push
 
 
-1. Lets create the Docker File
 
-First lets create a docker file for our serverpod application
-we create docker image of our application so that we can almost 
-deploy in any cloud provider
 
+
+```
+ARG mode=development
+ARG serverId=1
+
+FROM dart:stable
+
+RUN echo Building Image in $mode mode and with Server Id: $serverId
+
+WORKDIR /app
+COPY pubspec.* .
+COPY . .
+
+RUN  dart pub get
+
+RUN dart compile exe bin/main.dart
+
+
+FROM alpine:3.4
+
+COPY --from=0 /runtime/ /
+COPY --from=0 /app/bin/main.exe /app/bin/
+COPY --from=0 /app/config/ config
+COPY --from=0 /app/generated/ generated
+COPY --from=0 /app/web/ web
+
+ARG mode
+ENV runmode=$mode
+ENV RUN_SERVER_ID=$serverID
+
+EXPOSE 8080
+EXPOSE 8081
+EXPOSE 8082 
+
+CMD app/bin/main.exe --mode ${runmode} 
+```
