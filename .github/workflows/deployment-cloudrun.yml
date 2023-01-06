@@ -1,7 +1,5 @@
 name: Deploy to Cloud Run
 on:
-  push:
-    branches: [ deployment-cloudrun-production, deployment-cloudrun-staging ]
   workflow_dispatch:
     inputs:
       target:
