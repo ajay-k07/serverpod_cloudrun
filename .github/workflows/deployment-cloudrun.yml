@@ -7,7 +7,7 @@ on:
       target:
         description: 'Target'
         required: true
-        default: 'staging'
+        default: 'production'
         type: choice
         options:
           - 'staging'
