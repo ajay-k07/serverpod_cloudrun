@@ -23,7 +23,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setting Target mode
+      - name: Setting Target mode1
         if: ${{ github.event.inputs.target == '' }}  
         run: echo "TARGET=${{ github.event.inputs.target }}" >> $GITHUB_ENV  
         
