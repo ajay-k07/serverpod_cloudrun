@@ -1,5 +1,7 @@
 name: Deploy to Cloud Run
 on:
+  push:
+    branches: [ deployment-cloudrun-production, deployment-cloudrun-staging ]
   workflow_dispatch:
     inputs:
       target:
@@ -15,66 +17,68 @@ jobs:
     name: Deploy to Google Cloud Run
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: "read"
-      id-token: "write"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           submodules: recursive
+
+      - name: Setting Target mode
+        if: ${{ github.event.inputs.target == '' }}  
+        run: echo "TARGET=${{ github.event.inputs.target }}" >> $GITHUB_ENV  
         
+      - name: Setting Target mode based on branch
+        if: ${{ github.event.inputs.target != '' }}
+        run: echo "TARGET=${{ github.event.inputs.target }}" >> $GITHUB_ENV      
+  
       - name: Set env
         env:
           TARGET: ${{ github.event.inputs.target }}
         run: echo "IMAGE_NAME=$(echo ${GITHUB_REPOSITORY##*/}_${GITHUB_REF##*/}_$TARGET | sed 's/[^a-zA-Z0-9]/_/g')" >> $GITHUB_ENV
+      
       - name: Test
         run: echo $IMAGE_NAME 
-      - name: TARGET
-        env:
-          TARGET: ${{ github.event.inputs.target }}
-        run: $TARGET
 
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v1"
-        with:
-          credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
 
-      - name: Create passwords file
-        working-directory: serverpod_cloudrun_server
-        shell: bash
-        env:
-          SERVERPOD_PASSWORDS: ${{ secrets.SERVERPOD_PASSWORDS }}
-        run: |
-          pwd
-          echo "$SERVERPOD_PASSWORDS" > config/passwords.yaml
-          ls config/
+      # - id: "auth"
+      #   name: "Authenticate to Google Cloud"
+      #   uses: "google-github-actions/auth@v1"
+      #   with:
+      #     credentials_json: "${{ secrets.GOOGLE_CREDENTIALS }}"
+
+      # - name: Create passwords file
+      #   working-directory: serverpod_cloudrun_server
+      #   shell: bash
+      #   env:
+      #     SERVERPOD_PASSWORDS: ${{ secrets.SERVERPOD_PASSWORDS }}
+      #   run: |
+      #     pwd
+      #     echo "$SERVERPOD_PASSWORDS" > config/passwords.yaml
+      #     ls config/
           
-      - name: Configure Docker
-        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+      # - name: Configure Docker
+      #   run: gcloud auth configure-docker asia-south1-docker.pkg.dev
 
-      - name: Build the Docker image
-        run: "cd serverpod_cloudrun_server && docker build -t $IMAGE_NAME . --build-arg mode=${{ github.event.inputs.target }}"
+      # - name: Build the Docker image
+      #   run: "cd serverpod_cloudrun_server && docker build -t $IMAGE_NAME . --build-arg mode=${{ github.event.inputs.target }}"
 
-      - name: Tag the Docker image
-        run: docker tag server asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/$IMAGE_NAME
+      # - name: Tag the Docker image
+      #   run: docker tag server asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/$IMAGE_NAME
 
-      - name: Push Docker image
-        run: docker push asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/$IMAGE_NAME
+      # - name: Push Docker image
+      #   run: docker push asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/$IMAGE_NAME
 
-      - id: deploy
-        name: Deploy Docker image to cloud run
-        uses: "google-github-actions/deploy-cloudrun@v0"
-        with:
-          image: asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/$IMAGE
-          region: asia-south1
-          service: $IMAGE_NAME
-          flags: 
-            --port=8080
-            --allow-unauthenticated
+      # - id: deploy
+      #   name: Deploy Docker image to cloud run
+      #   uses: "google-github-actions/deploy-cloudrun@v0"
+      #   with:
+      #     image: asia-south1-docker.pkg.dev/serverpod/serverpod-docker-repo/$IMAGE
+      #     region: asia-south1
+      #     service: $IMAGE_NAME
+      #     flags: 
+      #       --port=8080
+      #       --allow-unauthenticated
 
-      - name: "Use output"
-        run: 'curl "${{ steps.deploy.outputs.url }}"'
+      # - name: "Use output"
+      #   run: 'curl "${{ steps.deploy.outputs.url }}"'
 
